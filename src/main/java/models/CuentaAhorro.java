@@ -4,7 +4,7 @@ public class CuentaAhorro extends CuentaBancaria {
     private double tasaInteres;
 
     public CuentaAhorro(String numeroCuenta, double saldoInicial, double tasaInteres) {
-        super(numeroCuenta, saldoInicial);
+        super(numeroCuenta, saldoInicial, "Ahorros");
         this.tasaInteres = tasaInteres;
     }
 

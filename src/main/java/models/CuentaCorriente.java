@@ -4,7 +4,7 @@ public class CuentaCorriente extends CuentaBancaria {
     private double limiteSobregiro;
 
     public CuentaCorriente(String numeroCuenta, double saldoInicial, double limiteSobregiro) {
-        super(numeroCuenta, saldoInicial);
+        super(numeroCuenta, saldoInicial, "Corriente");
         this.limiteSobregiro = limiteSobregiro;
     }
 
