@@ -1,5 +1,6 @@
 package models;
 
+import emuns.TipoCuenta;
 import models.CuentaBancaria;
 
 import java.util.Date;
@@ -19,15 +20,15 @@ public class Transferencia {
 
     public void transferir(Transferencia transferencia) throws Exception {
 
-        if (transferencia.cuentaOrigen.getTipoCuenta() == "Corriente"){
-            Double saldoSobregiro =  transferencia.cuentaOrigen.getSaldo() - 50000 - transferencia.getMonto();
-            if (saldoSobregiro >= -50000){
+        if (transferencia.cuentaOrigen.getTipoCuenta() == TipoCuenta.CORRIENTE){
+            Double saldoSobregiro =  transferencia.cuentaOrigen.getSaldo() + 50000 ;
+            if (transferencia.getMonto() > saldoSobregiro){
+                throw new Exception("Esta realizando un sobregiro y no es posible realizar la transferencia");
+            }else{
                 double saldoFinalDestino = transferencia.getCuentaDestino().getSaldo() + transferencia.getMonto();
                 double saldoFinalOrigen = transferencia.getCuentaOrigen().getSaldo() - transferencia.getMonto();
                 transferencia.getCuentaDestino().setSaldo(saldoFinalDestino);
                 transferencia.getCuentaOrigen().setSaldo(saldoFinalOrigen);
-            }else{
-                throw new Exception("Esta realizando un sobregiro y no es posible realizar la transferencia");
             }
         }else{
             throw new Exception("No es posible realiar la transferencia a este tipo de cuenta");
