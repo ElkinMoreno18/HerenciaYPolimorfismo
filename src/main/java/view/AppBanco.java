@@ -296,7 +296,7 @@ public class AppBanco extends JFrame  {
                     }
                 }
 
-                if((cuentaOrigen.getSaldo()) - 50000 >= (-50000)){
+                if((cuentaOrigen.getSaldo()) - 50000 >= (-50000)) {
                     JOptionPane.showMessageDialog(null, "La transferencia excede el limite de sobregiro");
                 } else {
                     double saldoMenos = cuentaOrigen.getSaldo() - saldoInput;
