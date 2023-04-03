@@ -22,22 +22,27 @@ public class AppBanco extends JFrame  {
     private JButton retirarButton;
     private JButton depositarButton;
     private JButton agregarInteresButton;
+    private JButton buttonTransferir;
+
     private JButton mostrarCuentas;
     private JLabel saldoLabel;
     private JLabel mensajeLabel;
     private JTable jTable;
     private DefaultTableModel defaultTableModel;
     private CuentaBancaria cuenta;
+
+    private CuentaBancaria cuentaOrigen;
+    private CuentaBancaria cuentaDestino;
     private List<CuentaBancaria> cuentasBancarias;
+    private JPanel AppBancoPanel;
 
     public AppBanco() {
         super("AppBanco");
         cuentasBancarias = new ArrayList<CuentaBancaria>();
-        setTitle("Tienda de Ropa");
+        setTitle("Transferencias Bancarias");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel(new GridLayout(8, 1));
-
 
         mensajeLabel = new JLabel();
         saldoLabel = new JLabel();
@@ -51,6 +56,7 @@ public class AppBanco extends JFrame  {
                 crearCuenta();
             }
         });
+        crearCuentaButton.setVisible(true);
         panel.add(crearCuentaButton);
 
         // Botón retirar
@@ -88,7 +94,7 @@ public class AppBanco extends JFrame  {
         panel.add(agregarInteresButton);
 
         // Botón mostrar cuentas
-        mostrarCuentas = new JButton("Mostrarcuentas");
+        mostrarCuentas = new JButton("Mostrar cuentas");
         mostrarCuentas.setBounds(20, 190, 150, 30);
         mostrarCuentas.addActionListener(new ActionListener() {
             @Override
@@ -99,14 +105,29 @@ public class AppBanco extends JFrame  {
         mostrarCuentas.setEnabled(false);
         panel.add(mostrarCuentas);
 
+
+        // Botón transferir
+        buttonTransferir = new JButton("Transferir");
+        buttonTransferir.setBounds(20, 190, 150, 30);
+        buttonTransferir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                transferir();
+            }
+        });
+        buttonTransferir.setEnabled(true);
+        panel.add(buttonTransferir);
+
         add(panel, BorderLayout.SOUTH);
     }
 
-    private void crearCuenta() {
+    private void crearCuenta(){
 
         JDialog cuentaCrear = new JDialog(this, "Información", true);
         JLabel label = new JLabel("Informacion cuentas");
+        label.setForeground(Color.black);
         cuentaCrear.add(label);
+        this.setVisible(true);
         cuentaCrear.setLayout(new BorderLayout(8,1));
 
         JLabel numeroCuentaLabel = new JLabel("Número de cuenta:");
@@ -138,34 +159,70 @@ public class AppBanco extends JFrame  {
         limiteSobregiroField.setBounds(150, 110, 200, 20);
         cuentaCrear.add(limiteSobregiroField);
 
-        //Crear cuenta bancaria
-//        JButton btnCrearCuenta = new JButton("Crear cuenta");
-//        btnCrearCuenta.setBounds(20, 140, 120, 30);
-//        btnCrearCuenta.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String numeroCuenta = numeroCuentaField.getText();
-//                double saldoInicial = Double.parseDouble(saldoInicialField.getText());
-//                double tasaInteres = Double.parseDouble(tasaInteresField.getText());
-//                double limiteSobregiro = Double.parseDouble(limiteSobregiroField.getText());
-//                TipoCuenta tipoCuenta = TipoCuenta.CORRIENTE;
-//                if (saldoInicial >= 0 && tasaInteres >= 0 && limiteSobregiro >= 0) {
-//                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta ,limiteSobregiro);
-//                    cuentasBancarias.add(cuenta);
-//                    mensajeLabel.setText("Cuenta creada: " + cuenta.getClass().getSimpleName());
-//                    saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
-//                    agregarInteresButton.setEnabled(false);
-//                    mostrarCuentas.setEnabled(true);
-////                    panel.add(mensajeLabel);
-////                    panel.add(saldoLabel);
-//
-//
-//                } else {
-//                    mensajeLabel.setText("Los valores deben ser positivos");
-//                }
-//            }
-//        });
-//        cuentaCrear.add(btnCrearCuenta, BorderLayout.CENTER);
+
+       // Crear cuenta bancaria
+        JButton btnCrearCuenta = new JButton("Crear cuenta Corriente");
+        btnCrearCuenta.setBounds(20, 140, 120, 30);
+        btnCrearCuenta.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String numeroCuenta = numeroCuentaField.getText();
+                double saldoInicial = Double.parseDouble(saldoInicialField.getText());
+                double tasaInteres = Double.parseDouble(tasaInteresField.getText());
+                double limiteSobregiro = Double.parseDouble(limiteSobregiroField.getText());
+                TipoCuenta tipoCuenta = TipoCuenta.CORRIENTE;
+                if (saldoInicial >= 0 && tasaInteres >= 0 && limiteSobregiro >= 0) {
+                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta ,limiteSobregiro);
+                    cuentasBancarias.add(cuenta);
+                    mensajeLabel.setText("Cuenta creada: " + cuenta.getClass().getSimpleName());
+                    saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
+                    agregarInteresButton.setEnabled(false);
+                    mostrarCuentas.setEnabled(true);
+//                    panel.add(mensajeLabel);
+//                    panel.add(saldoLabel);
+
+
+                } else {
+                    mensajeLabel.setText("Los valores deben ser positivos");
+                }
+            }
+        });
+        cuentaCrear.add(btnCrearCuenta, BorderLayout.CENTER);
+
+        JButton btnCrearCuentaAhorros = new JButton("Crear cuenta de Ahorros");
+        btnCrearCuentaAhorros.setBounds(20, 140, 120, 30);
+        btnCrearCuentaAhorros.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String numeroCuenta = numeroCuentaField.getText();
+                double saldoInicial = Double.parseDouble(saldoInicialField.getText());
+                double tasaInteres = Double.parseDouble(tasaInteresField.getText());
+                double limiteSobregiro = Double.parseDouble(limiteSobregiroField.getText());
+                if(limiteSobregiro > 0 ){
+                    JOptionPane.showMessageDialog(null,"Este tipo de cuenta no permite Sobregiro");
+                }
+                TipoCuenta tipoCuenta = TipoCuenta.AHORROS;
+                if (saldoInicial >= 0 && tasaInteres >= 0 && limiteSobregiro >= 0) {
+                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta ,0);
+                    cuentasBancarias.add(cuenta);
+                    mensajeLabel.setText("Cuenta creada: " + cuenta.getClass().getSimpleName());
+                    saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
+                    agregarInteresButton.setEnabled(false);
+                    mostrarCuentas.setEnabled(true);
+//                    panel.add(mensajeLabel);
+//                    panel.add(saldoLabel);
+
+
+                } else {
+                    mensajeLabel.setText("Los valores deben ser positivos");
+                }
+            }
+        });
+
+        cuentaCrear.add(btnCrearCuentaAhorros, BorderLayout.CENTER);
+        cuentaCrear.add(btnCrearCuenta, BorderLayout.CENTER);
+
+        cuentaCrear.setLayout(new GridLayout(0,1,1,10));
 
 
         cuentaCrear.setSize(500, 500);
@@ -215,6 +272,37 @@ public class AppBanco extends JFrame  {
                 cuenta.depositar(cantidad);
                 mensajeLabel.setText("Depósito exitoso");
                 saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
+            } else {
+                mensajeLabel.setText("La cantidad debe ser positiva");
+            }
+        } else {
+            mensajeLabel.setText("No hay una cuenta creada");
+        }
+    }
+
+    private void transferir(){
+        if (cuenta != null) {
+            String cuentaOrigenInput = JOptionPane.showInputDialog("Cuenta de origen:");
+            String cuentaDestinoInput = JOptionPane.showInputDialog("Cuenta de destino:");
+            int saldoInput = Integer.parseInt(JOptionPane.showInputDialog("Saldo a transferir:"));
+
+            if (saldoInput >= 0) {
+                for(CuentaBancaria itemCuenta : cuentasBancarias){
+                    if(itemCuenta.getNumeroCuenta().equals(cuentaOrigenInput)) {
+                        cuentaOrigen = itemCuenta;
+                    }
+                    if(itemCuenta.getNumeroCuenta().equals(cuentaDestinoInput)) {
+                        cuentaDestino = itemCuenta;
+                    }
+                }
+                double saldoMenos = cuentaOrigen.getSaldo() - saldoInput;
+                double saldoMas = cuentaDestino.getSaldo() + saldoInput;
+
+                cuentaOrigen.setSaldo(saldoMenos);
+                cuentaDestino.setSaldo(saldoMas);
+
+                mensajeLabel.setText("Transferencia exitosa");
+                saldoLabel.setText("Saldo actual: " + cuentaDestino.getSaldo());
             } else {
                 mensajeLabel.setText("La cantidad debe ser positiva");
             }
