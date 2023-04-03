@@ -18,4 +18,5 @@ public class CuentaCorriente extends CuentaBancaria {
         saldo -= monto;
         return false;
     }
+
 }
