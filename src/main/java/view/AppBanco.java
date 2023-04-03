@@ -295,14 +295,21 @@ public class AppBanco extends JFrame  {
                         cuentaDestino = itemCuenta;
                     }
                 }
-                double saldoMenos = cuentaOrigen.getSaldo() - saldoInput;
-                double saldoMas = cuentaDestino.getSaldo() + saldoInput;
 
-                cuentaOrigen.setSaldo(saldoMenos);
-                cuentaDestino.setSaldo(saldoMas);
+                if((cuentaOrigen.getSaldo()) - 50000 >= (-50000)){
+                    JOptionPane.showMessageDialog(null, "La transferencia excede el limite de sobregiro");
+                } else {
+                    double saldoMenos = cuentaOrigen.getSaldo() - saldoInput;
+                    double saldoMas = cuentaDestino.getSaldo() + saldoInput;
 
-                mensajeLabel.setText("Transferencia exitosa");
-                saldoLabel.setText("Saldo actual: " + cuentaDestino.getSaldo());
+                    cuentaOrigen.setSaldo(saldoMenos);
+                    cuentaDestino.setSaldo(saldoMas);
+                    mensajeLabel.setText("Transferencia exitosa");
+                    saldoLabel.setText("Saldo actual: " + cuentaDestino.getSaldo());
+                }
+
+
+
             } else {
                 mensajeLabel.setText("La cantidad debe ser positiva");
             }
