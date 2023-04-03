@@ -1,18 +1,20 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cliente {
 
     protected int id;
     protected String nombre, direccion, telefono;
+    protected List<CuentaBancaria> cuentaBancarias;
 
-    CuentaBancaria cuentaBancaria;
-
-    public Cliente(int id, String nombre, String direccion, String telefono, CuentaBancaria cuentaBancaria) {
+    public Cliente(int id, String nombre, String direccion, String telefono) {
         this.id = id;
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.cuentaBancaria = cuentaBancaria;
+        this.cuentaBancarias = new ArrayList<>();
     }
 
     public int getId() {
@@ -23,9 +25,9 @@ public class Cliente {
         return nombre;
     }
 
-    public void addCuenta(CuentaBancaria cuentaBancaria){
 
+    public List<CuentaBancaria> getCuentaBancarias() {
+        return cuentaBancarias;
     }
-
 
 }

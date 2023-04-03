@@ -1,10 +1,12 @@
 package models;
 
+import emuns.TipoCuenta;
+
 public class CuentaAhorro extends CuentaBancaria {
     private double tasaInteres;
 
-    public CuentaAhorro(String numeroCuenta, double saldoInicial, double tasaInteres) {
-        super(numeroCuenta, saldoInicial, "Ahorros");
+    public CuentaAhorro(String numeroCuenta, double saldoInicial,TipoCuenta tipoCuenta, double tasaInteres) {
+        super(numeroCuenta, saldoInicial, tipoCuenta);
         this.tasaInteres = tasaInteres;
     }
 
