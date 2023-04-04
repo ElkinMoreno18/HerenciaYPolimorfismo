@@ -13,7 +13,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class AppBanco extends JFrame  {
+public class AppBanco extends JFrame {
     private static JTextField numeroCuentaField;
     private JTextField saldoInicialField;
     private JTextField tasaInteresField;
@@ -35,6 +35,9 @@ public class AppBanco extends JFrame  {
     private CuentaBancaria cuentaDestino;
     private List<CuentaBancaria> cuentasBancarias;
     private JPanel AppBancoPanel;
+    private CuentaBancaria cuentaRetirar;
+    private CuentaBancaria cuentaDepositar;
+
 
     public AppBanco() {
         super("AppBanco");
@@ -68,7 +71,7 @@ public class AppBanco extends JFrame  {
                 retirar();
             }
         });
-
+        retirarButton.setEnabled(false);
         panel.add(retirarButton);
 
         // Botón depositar
@@ -80,6 +83,7 @@ public class AppBanco extends JFrame  {
                 depositar();
             }
         });
+        depositarButton.setEnabled(false);
         panel.add(depositarButton);
 
         // Botón agregar interés
@@ -91,6 +95,7 @@ public class AppBanco extends JFrame  {
                 agregarInteres();
             }
         });
+        agregarInteresButton.setEnabled(false);
         panel.add(agregarInteresButton);
 
         // Botón mostrar cuentas
@@ -115,20 +120,20 @@ public class AppBanco extends JFrame  {
                 transferir();
             }
         });
-        buttonTransferir.setEnabled(true);
+        buttonTransferir.setEnabled(false);
         panel.add(buttonTransferir);
 
         add(panel, BorderLayout.SOUTH);
     }
 
-    private void crearCuenta(){
+    private void crearCuenta() {
 
         JDialog cuentaCrear = new JDialog(this, "Información", true);
         JLabel label = new JLabel("Informacion cuentas");
         label.setForeground(Color.black);
         cuentaCrear.add(label);
         this.setVisible(true);
-        cuentaCrear.setLayout(new BorderLayout(8,1));
+        cuentaCrear.setLayout(new BorderLayout(8, 1));
 
         JLabel numeroCuentaLabel = new JLabel("Número de cuenta:");
         numeroCuentaLabel.setBounds(20, 20, 120, 20);
@@ -160,7 +165,7 @@ public class AppBanco extends JFrame  {
         cuentaCrear.add(limiteSobregiroField);
 
 
-       // Crear cuenta bancaria
+        // Crear cuenta bancaria
         JButton btnCrearCuenta = new JButton("Crear cuenta Corriente");
         btnCrearCuenta.setBounds(20, 140, 120, 30);
         btnCrearCuenta.addActionListener(new ActionListener() {
@@ -172,12 +177,16 @@ public class AppBanco extends JFrame  {
                 double limiteSobregiro = Double.parseDouble(limiteSobregiroField.getText());
                 TipoCuenta tipoCuenta = TipoCuenta.CORRIENTE;
                 if (saldoInicial >= 0 && tasaInteres >= 0 && limiteSobregiro >= 0) {
-                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta ,limiteSobregiro);
+                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta, limiteSobregiro);
                     cuentasBancarias.add(cuenta);
                     mensajeLabel.setText("Cuenta creada: " + cuenta.getClass().getSimpleName());
                     saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
                     agregarInteresButton.setEnabled(false);
                     mostrarCuentas.setEnabled(true);
+                    agregarInteresButton.setEnabled(true);
+                    retirarButton.setEnabled(true);
+                    depositarButton.setEnabled(true);
+                    buttonTransferir.setEnabled(true);
 //                    panel.add(mensajeLabel);
 //                    panel.add(saldoLabel);
 
@@ -198,17 +207,21 @@ public class AppBanco extends JFrame  {
                 double saldoInicial = Double.parseDouble(saldoInicialField.getText());
                 double tasaInteres = Double.parseDouble(tasaInteresField.getText());
                 double limiteSobregiro = Double.parseDouble(limiteSobregiroField.getText());
-                if(limiteSobregiro > 0 ){
-                    JOptionPane.showMessageDialog(null,"Este tipo de cuenta no permite Sobregiro");
+                if (limiteSobregiro > 0) {
+                    JOptionPane.showMessageDialog(null, "Este tipo de cuenta no permite Sobregiro");
                 }
                 TipoCuenta tipoCuenta = TipoCuenta.AHORROS;
                 if (saldoInicial >= 0 && tasaInteres >= 0 && limiteSobregiro >= 0) {
-                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta ,0);
+                    cuenta = new CuentaCorriente(numeroCuenta, saldoInicial, tipoCuenta, 0);
                     cuentasBancarias.add(cuenta);
                     mensajeLabel.setText("Cuenta creada: " + cuenta.getClass().getSimpleName());
                     saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
                     agregarInteresButton.setEnabled(false);
                     mostrarCuentas.setEnabled(true);
+                    agregarInteresButton.setEnabled(true);
+                    retirarButton.setEnabled(true);
+                    depositarButton.setEnabled(true);
+                    buttonTransferir.setEnabled(true);
 //                    panel.add(mensajeLabel);
 //                    panel.add(saldoLabel);
 
@@ -222,7 +235,7 @@ public class AppBanco extends JFrame  {
         cuentaCrear.add(btnCrearCuentaAhorros, BorderLayout.CENTER);
         cuentaCrear.add(btnCrearCuenta, BorderLayout.CENTER);
 
-        cuentaCrear.setLayout(new GridLayout(0,1,1,10));
+        cuentaCrear.setLayout(new GridLayout(0, 1, 1, 10));
 
 
         cuentaCrear.setSize(500, 500);
@@ -247,7 +260,7 @@ public class AppBanco extends JFrame  {
         defaultTableModel.setRowCount(0);
 
         int identificador = 0;
-        for(CuentaBancaria itemCuenta : cuentasBancarias){
+        for (CuentaBancaria itemCuenta : cuentasBancarias) {
             Object[] fila = {
                     identificador,
                     itemCuenta.getNumeroCuenta(),
@@ -265,13 +278,21 @@ public class AppBanco extends JFrame  {
         dialogo.setVisible(true);
     }
 
-    private void depositar(){
+    private void depositar() {
         if (cuenta != null) {
+
+            String cuentaDepositarInput = JOptionPane.showInputDialog("Numero de cuenta: ");
+            for (CuentaBancaria itemCuenta : cuentasBancarias) {
+                if (itemCuenta.getNumeroCuenta().equals(cuentaDepositarInput)) {
+                    cuentaDepositar = (itemCuenta);
+
+                }
+            }
             double cantidad = Double.parseDouble(JOptionPane.showInputDialog("Cantidad a depositar:"));
             if (cantidad >= 0) {
-                cuenta.depositar(cantidad);
+                cuentaDepositar.depositar(cantidad);
                 mensajeLabel.setText("Depósito exitoso");
-                saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
+                saldoLabel.setText("Saldo actual: " + cuentaDepositar.getSaldo());
             } else {
                 mensajeLabel.setText("La cantidad debe ser positiva");
             }
@@ -280,23 +301,23 @@ public class AppBanco extends JFrame  {
         }
     }
 
-    private void transferir(){
+    private void transferir() {
         if (cuenta != null) {
             String cuentaOrigenInput = JOptionPane.showInputDialog("Cuenta de origen:");
             String cuentaDestinoInput = JOptionPane.showInputDialog("Cuenta de destino:");
             int saldoInput = Integer.parseInt(JOptionPane.showInputDialog("Saldo a transferir:"));
 
             if (saldoInput >= 0) {
-                for(CuentaBancaria itemCuenta : cuentasBancarias){
-                    if(itemCuenta.getNumeroCuenta().equals(cuentaOrigenInput)) {
+                for (CuentaBancaria itemCuenta : cuentasBancarias) {
+                    if (itemCuenta.getNumeroCuenta().equals(cuentaOrigenInput)) {
                         cuentaOrigen = itemCuenta;
                     }
-                    if(itemCuenta.getNumeroCuenta().equals(cuentaDestinoInput)) {
+                    if (itemCuenta.getNumeroCuenta().equals(cuentaDestinoInput)) {
                         cuentaDestino = itemCuenta;
                     }
                 }
 
-                if((cuentaOrigen.getSaldo()) - 50000 >= (-50000)) {
+                if ((cuentaOrigen.getSaldo()) - 50000 >= (-50000)) {
                     JOptionPane.showMessageDialog(null, "La transferencia excede el limite de sobregiro");
                 } else {
                     double saldoMenos = cuentaOrigen.getSaldo() - saldoInput;
@@ -309,7 +330,6 @@ public class AppBanco extends JFrame  {
                 }
 
 
-
             } else {
                 mensajeLabel.setText("La cantidad debe ser positiva");
             }
@@ -318,7 +338,7 @@ public class AppBanco extends JFrame  {
         }
     }
 
-    private void agregarInteres(){
+    private void agregarInteres() {
         if (cuenta != null) {
             if (cuenta instanceof CuentaAhorro) {
                 ((CuentaAhorro) cuenta).agregarInteres();
@@ -332,14 +352,23 @@ public class AppBanco extends JFrame  {
         }
     }
 
-    private void retirar(){
+    private void retirar() {
         if (cuenta != null) {
+
+            String cuentaRetirarInput = JOptionPane.showInputDialog("Numero de cuenta: ");
+            for (CuentaBancaria itemCuenta : cuentasBancarias) {
+                if (itemCuenta.getNumeroCuenta().equals(cuentaRetirarInput)) {
+                    cuentaRetirar = (itemCuenta);
+
+                }
+            }
+
             double cantidad = Double.parseDouble(JOptionPane.showInputDialog("Cantidad a retirar:"));
             if (cantidad >= 0) {
                 try {
-                    if (cuenta.retirar(cantidad)) {
+                    if (cuentaRetirar.retirar(cantidad)) {
                         mensajeLabel.setText("Retiro exitoso");
-                        saldoLabel.setText("Saldo actual: " + cuenta.getSaldo());
+                        saldoLabel.setText("Saldo actual: " + cuentaRetirar.getSaldo());
                     } else {
                         mensajeLabel.setText("No se pudo retirar, saldo insuficiente");
                     }
